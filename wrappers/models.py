@@ -25,10 +25,11 @@ from theano import tensor as T
 import time
 from lasagne.layers import DenseLayer, DropoutLayer, InputLayer, get_all_params
 from lasagne.nonlinearities import rectify, softmax
-from lasagne.objectives import categorical_crossentropy, Objective
+from lasagne.objectives import categorical_crossentropy
 from sklearn.base import BaseEstimator
 import xgboost as xgb
 from sklearn.utils import check_random_state
+from sklearn.model_selection import StratifiedShuffleSplit
 
 class XGBoostClassifier(BaseEstimator):
     def __init__(self, nthread, eta,
@@ -258,10 +259,12 @@ class NeuralNetClassifier(BaseEstimator):
 
         batch_slice = slice(batch_index * self.batch_size, (batch_index + 1) * self.batch_size)
 
-        objective = Objective(output_layer, loss_function=categorical_crossentropy)
-
-        loss_train = objective.get_loss(X_batch, target=y_batch)
-        loss_eval = objective.get_loss(X_batch, target=y_batch, deterministic=True)
+        #objective = Objective(output_layer, loss_function=categorical_crossentropy)
+        output_train = lasagne.layers.get_output(output_layer, X_batch)
+        loss_train = lasagne.objectives.aggregate(lasagne.objectives.categorical_crossentropy(output_train, y_batch))
+        output_eval = lasagne.layers.get_output(output_layer, X_batch)
+        loss_train = lasagne.objectives.aggregate(categorical_crossentropy(output_eval, y_batch))
+        loss_eval = lasagne.objectives.aggregate(categorical_crossentropy(output_eval, y_batch))
 
         pred = T.argmax(lasagne.layers.get_output(output_layer, X_batch, deterministic=True), axis=1)
         proba = lasagne.layers.get_output(output_layer, X_batch, deterministic=True)
