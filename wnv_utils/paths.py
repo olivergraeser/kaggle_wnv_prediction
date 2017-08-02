@@ -2,7 +2,7 @@
 import os
 
 
-PROJECT_PATH = "D:/Data_Science_Projects/WNV/"
+PROJECT_PATH = "/home/ec2-user/kaggle/kaggle_wnv_prediction"
 
 # data and submission folders
 DATA_PATH = os.path.join(PROJECT_PATH, "data")
