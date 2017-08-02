@@ -87,7 +87,7 @@ def MergeWeather(df1, df2):
 def LoadWeather():  # Load and prepare weather data
     days = [1, 3, 5, 8, 12]     #lagged weather values used as features
     weather = pd.read_csv(path_weather)
-    weather.sort(['Date', 'Station'], axis=0, ascending=True, inplace=True)
+    weather.sort_values(['Date', 'Station'], axis=0, ascending=True, inplace=True)
     filter_out = ['Heat', 'CodeSum', 'Depth', 'Water1', 'SnowFall', 'StnPressure',  'SeaLevel', 'AvgSpeed' ]
     weather.drop(filter_out, axis=1, inplace=True) # these variables are not used in the analysis
     weather.replace(['  T','M','-'], [0.001, np.nan, np.nan], inplace=True) # replace "Trace" with 0.001, replace M and missing with NaN
@@ -96,7 +96,7 @@ def LoadWeather():  # Load and prepare weather data
     weather1 = buildLaggedFeatures(weather[weather['Station']==1], days) # build lagged features for 1st station
     weather2 = buildLaggedFeatures(weather[weather['Station']==2], days) # build lagged features for 2d station
     weather = weather1.append(weather2)                                  # append data from 2 stations
-    weather.sort(['Date', 'Station'], axis=0, ascending=True, inplace=True)
+    weather.sort_values(['Date', 'Station'], axis=0, ascending=True, inplace=True)
     return weather
     
 def LoadTest(version): # Load and prepare test data
